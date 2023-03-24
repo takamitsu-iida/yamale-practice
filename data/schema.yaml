@@ -1,0 +1,81 @@
+
+parameters:
+  device_attr: map(include('device_attr_type'), key=enum('cr1', 'cr2'))
+
+---
+
+device_attr_type:
+  hostname: str()
+  bfd_attr: include('bfd_attr_type')
+  bgp_attr: include('bgp_attr_type')
+  ospf_attr: include('ospf_attr_type')
+  interface_attr: |
+    subset(
+      map(include('interface_attr_type'), key=enum('CR1', 'CR2', 'ER01', 'ER02')),
+      map(include('loopback_type'), key=enum('LOOPBACK'))
+    )
+
+bfd_attr_type:
+  echo_disables: list(enum('CR1', 'CR2', 'ER01', 'ER02'))
+
+bgp_attr_type:
+  confederation_peers: list(int())
+  router_id: ip(version=4)
+  cluster_id: ip(version=4)
+
+ospf_attr_type:
+  router_id: ip(version=4)
+  default_information_metric: int()
+  interface_attr: map(include('ospf_intf_attr_type', required=False))
+
+ospf_intf_attr_type:
+  network_type: enum('point-to-point')
+  cost: int()
+  bfd: include('ospf_intf_bfd_type', required=False)
+
+ospf_intf_bfd_type:
+  minimum_interval: int()
+  multiplier: int()
+
+loopback_type:
+  ifname: str()
+  is_upstream: bool()
+  ipv4_prefix: ip(version=4)
+  ipv4_len: int()
+  ipv4_mask: ip(version=4)
+  ipv6_prefix: ip(version=6)
+  ipv6_len: int()
+  ipv4_address: ip(version=4)
+  ipv6_address: ip(version=6)
+
+interface_attr_type:
+  ifname: str()
+  is_upstream: bool()
+  ipv4_prefix: ip(version=4)
+  ipv4_len: int()
+  ipv4_mask: ip(version=4)
+  ipv6_prefix: ip(version=6)
+  ipv6_len: int()
+  ipv4_address: ip(version=4)
+  ipv6_address: ip(version=6)
+  ipv6_link_local_address: ip(version=6)
+  description: str(required=False)
+  mtu: int(required=False)
+  bundle_id: int(required=False)
+  bundle_minimum_active_links: int(required=False)
+  bundles: include('bundles_type', required=False)
+  peer: include('peer_type', required=False)
+
+peer_type:
+  ifname: str(required=False)
+  description: str(required=False)
+  ipv4_address: ip(version=4)
+  ipv6_address: ip(version=6)
+  ipv6_link_local_address: ip(version=6, required=False)
+  mtu: int(required=False)
+
+bundles_type: list(include('bundles_intf_type'))
+
+bundles_intf_type:
+  ifname: str()
+  description: str()
