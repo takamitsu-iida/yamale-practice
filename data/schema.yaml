@@ -6,6 +6,10 @@ parameters:
 
 device_attr_type:
   hostname: str()
+  loopback:
+    ifname: str()
+    ipv4_address: ip(version=4)
+    ipv6_address: ip(version=6)
   bfd_attr: include('bfd_attr_type')
   bgp_attr: include('bgp_attr_type')
   ospf_attr: include('ospf_attr_type')
